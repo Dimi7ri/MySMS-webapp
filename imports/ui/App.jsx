@@ -14,19 +14,22 @@ export default class App extends TrackerReact(Component) {
         number:'',
         numberEmpty: false,
         message:'',
-        messageEmpty: false
+        messageEmpty: false,
+        chars_left: 459,
+        numberInvalid: false,
     }
     this.handleSubmit = this.handleSubmit.bind(this);
     this.numberChange = this.numberChange.bind(this);
     this.messageChange = this.messageChange.bind(this);
   }
-
   numberChange(event){
     this.setState({number: event.target.value});
   }
-
   messageChange(event){
-    this.setState({message: event.target.value});
+    this.setState({
+      message: event.target.value,
+      chars_left: 459 - event.target.value.length
+    });
   }
 
   handleSubmit(e) {
@@ -37,6 +40,11 @@ export default class App extends TrackerReact(Component) {
       return;
     }
     this.setState({numberEmpty: false});
+    if(this.state.number.length!=11 || isNaN(this.state.number)){
+      this.setState({numberInvalid: true});
+      return;
+    }
+    this.setState({numberInvalid: false});
 
     if(!this.state.message){
       this.setState({messageEmpty: true});
@@ -56,22 +64,25 @@ export default class App extends TrackerReact(Component) {
       return (
         <div className="mainpan">
           <div className="container">
-              <h1>My SMS Web App</h1>
+              <h2>My SMS Web App</h2>
               {(() => {
-                  if (this.state.numberEmpty) {
-                      return (<Alert {...{message: ' Type a valid phone number.'}}/>)
+                  if (this.state.numberInvalid) {
+                      return (<Alert {...{message: ' Type a valid phone number. Ex: 61412345678'}}/>)
+                  }
+                  else if (this.state.numberEmpty) {
+                      return (<Alert {...{message: ' Fill up phone number.'}}/>)
                   }
                   else if (this.state.messageEmpty) {
                       return (<Alert {...{message: ' Type the message.'}}/>)
                   }
                   else {
                     return(
-                      <p className="text-center">Send text messages</p>
+                      <p className="text-center">Send text messages.</p>
                     )
                   }
               })()}
               {(() => {
-                if (this.state.numberEmpty) {
+                if (this.state.numberEmpty || this.state.numberInvalid) {
                   return(
                     <div>
                       <div className="form-group has-error">
@@ -80,7 +91,8 @@ export default class App extends TrackerReact(Component) {
                       </div>
                       <div className="form-group">
                         <label>Message:</label>
-                        <textarea className="form-control" rows="5" value={this.state.message} onChange={this.messageChange}></textarea>
+                        <textarea className="form-control" rows="5" maxLength="459" value={this.state.message} onChange={this.messageChange}></textarea>
+                        <p>Characters Left: {this.state.chars_left}</p>
                       </div>
                     </div>
                   )
@@ -94,7 +106,8 @@ export default class App extends TrackerReact(Component) {
                       </div>
                       <div className="form-group has-error">
                         <label className="text-danger">Message:</label>
-                        <textarea className="form-control" rows="5" value={this.state.message} onChange={this.messageChange}></textarea>
+                        <textarea className="form-control" rows="5" maxLength="459" value={this.state.message} onChange={this.messageChange}></textarea>
+                        <p>Characters Left: {this.state.chars_left}</p>
                       </div>
                     </div>
                   )
@@ -108,7 +121,8 @@ export default class App extends TrackerReact(Component) {
                       </div>
                       <div className="form-group">
                         <label>Message:</label>
-                        <textarea className="form-control" rows="5" value={this.state.message} onChange={this.messageChange}></textarea>
+                        <textarea className="form-control" rows="5" maxLength="459" value={this.state.message} onChange={this.messageChange}></textarea>
+                        <p>Characters Left: {this.state.chars_left}</p>
                       </div>
                     </div>
                   )
