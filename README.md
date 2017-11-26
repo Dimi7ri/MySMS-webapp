@@ -18,3 +18,8 @@
 #### What's left to do
 
 - Implement Bitly URL shortner to replace urls in text messages. 
+
+
+#### Screenshots:
+![Alt text](https://image.ibb.co/isjtQ6/Message_sent.png "Send sms online, message sent")
+![Alt text](https://image.ibb.co/gjjosm/fill_up_number.png "Send sms online, fill up number")
