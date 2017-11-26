@@ -39,6 +39,7 @@ export default class App extends TrackerReact(Component) {
       this.setState({numberEmpty: true});
       return;
     }
+    
     this.setState({numberEmpty: false});
     if(this.state.number.length!=11 || isNaN(this.state.number)){
       this.setState({numberInvalid: true});
