@@ -17,6 +17,8 @@ export default class App extends TrackerReact(Component) {
         messageEmpty: false,
         chars_left: 459,
         numberInvalid: false,
+        SMSSent: false,
+        SMSError: false
     }
     this.handleSubmit = this.handleSubmit.bind(this);
     this.numberChange = this.numberChange.bind(this);
@@ -39,9 +41,9 @@ export default class App extends TrackerReact(Component) {
       this.setState({numberEmpty: true});
       return;
     }
-    
     this.setState({numberEmpty: false});
-    if(this.state.number.length!=11 || isNaN(this.state.number)){
+
+    if(isNaN(this.state.number)){
       this.setState({numberInvalid: true});
       return;
     }
@@ -52,13 +54,29 @@ export default class App extends TrackerReact(Component) {
       return;
     }
     this.setState({messageEmpty: false});
+    this.setState({SMSError: false});
 
-    console.log(this.state.number);
-    console.log(this.state.message);
-    Meteor.call('sendSMS', this.state.number, this.state.message, () => {
-      console.log("client side send sms")
+    Meteor.call('sendSMS', this.state.number, this.state.message, (err, data) => {
+        if (err) {
+          this.setState({ServerError: true});
+          return;
+        }
+        if (data) {
+          if(data.statusCode == 200){
+            this.setState({
+              SMSSent: true,
+              number: '',
+              message:'',
+              chars_left: 459
+            });
+            return;
+          }
+          if(data.response.statusCode == 400){
+            this.setState({SMSError: true});
+            return;
+          }
+        }
     });
-
   }
 
   render() {
@@ -70,8 +88,14 @@ export default class App extends TrackerReact(Component) {
                   if (this.state.numberInvalid) {
                       return (<Alert {...{message: ' Type a valid phone number. Ex: 61412345678'}}/>)
                   }
+                  else if (this.state.SMSError) {
+                      return (<Alert {...{type: 'severe', message: ' The number you tried to reach is unavailable.'}}/>)
+                  }
                   else if (this.state.numberEmpty) {
                       return (<Alert {...{message: ' Fill up phone number.'}}/>)
+                  }
+                  else if (this.state.SMSSent) {
+                      return (<Alert {...{type: 'success', message: ' Your message was delivered!.'}}/>)
                   }
                   else if (this.state.messageEmpty) {
                       return (<Alert {...{message: ' Type the message.'}}/>)
@@ -83,7 +107,7 @@ export default class App extends TrackerReact(Component) {
                   }
               })()}
               {(() => {
-                if (this.state.numberEmpty || this.state.numberInvalid) {
+                if (this.state.numberEmpty || this.state.numberInvalid || this.state.SMSError) {
                   return(
                     <div>
                       <div className="form-group has-error">

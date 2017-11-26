@@ -5,10 +5,14 @@
     "start": "meteor run"
   },
   "dependencies": {
-    "babel-runtime": "^6.26.0",
+    "async": "^2.6.0",
     "bcrypt": "^1.0.3",
+    "bitly": "^5.0.12",
+    "fibers": "^2.0.0",
+    "linkifyjs": "^2.1.5",
     "meteor-node-stubs": "^0.3.2",
     "react": "^16.1.1",
-    "react-dom": "^16.1.1"
+    "react-dom": "^16.1.1",
+    "validator": "^9.1.2"
   }
 }
